@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int networkDiameter = 10;
+int networkDiameter = 10; // initially set, updated w user input
 std::chrono::time_point<std::chrono::system_clock > startSimTime, endSimTime;
 
 class packet
@@ -129,10 +129,9 @@ void bfs(int src, int dest, int seq_no)
 	}
 }
 
-void routingIndividualPkt(packet &pkt)
+void routingIndividualPkt(packet & pkt)
 {
-	retransmit:
-	while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
+	retransmit: while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
 	{
 		//set startTime for curPacket
 		std::chrono::time_point<std::chrono::system_clock > curTime = std::chrono::system_clock::now();
@@ -149,22 +148,23 @@ void routingIndividualPkt(packet &pkt)
 
 		if (reached[pkt.seq_no])
 		{
-			cout << "\nPacket:"<<pkt.seq_no<<" has been successfully received!\n";
+			cout << "\nPacket:" << pkt.seq_no << " has been successfully received!\n";
 		}
+	}
 
-	}
-	
-	if(dropped[pkt.seq_no]){
+	if (dropped[pkt.seq_no])
+	{
 		//retransmit after sometime
-		if(pkt.maxRetransmit--){
-		cout<<"\nRetransmitting Packet:"<<pkt.seq_no;
-		goto retransmit;
-	}else{
-		cout<<"\nRetransmits for Packet:"<<pkt.seq_no<<" exhausted!\n";
+		if (pkt.maxRetransmit--)
+		{
+			cout << "\nRetransmitting Packet:" << pkt.seq_no;
+			goto retransmit;
+		}
+		else
+		{
+			cout << "\nRetransmits for Packet:" << pkt.seq_no << " exhausted!\n";
+		}
 	}
-	}
-	
-	
 }
 
 //Check if a node exists in the neighbour set of another node
@@ -247,9 +247,9 @@ int main()
 					goto l3;
 				}
 
-				if (nbrsSize > (noNodes - nn[i].nbrs.size()-1))
+				if (nbrsSize > (noNodes - nn[i].nbrs.size() - 1))
 				{
-					cout << "\nCur Node can only accomodate a max of : " << (noNodes - nn[i].nbrs.size() -1) << " nodes more";
+					cout << "\nCur Node can only accomodate a max of : " << (noNodes - nn[i].nbrs.size() - 1) << " nodes more";
 					goto l3;
 				}
 
@@ -298,14 +298,14 @@ int main()
 		networkDiameter = noNodes;
 		int maxHopCount = networkDiameter;
 		double ttl_left = 3;
-		int retransmitLimit=3;
+		int retransmitLimit = 3;
 
 		cout << "\nEnter maxHopCount permitted for a packet: ";
 		cin >> maxHopCount;
 
 		cout << "\nEnter Time To Live(TTL) desired for a packet(in Seconds, double type so decimal allowed): ";
 		cin >> ttl_left;
-		
+
 		cout << "\nEnter Max No of Retransmissions possible for a packet before it will be discarded: ";
 		cin >> retransmitLimit;
 
@@ -317,8 +317,8 @@ int main()
 			pkt[i].maxRetransmit = retransmitLimit;
 
 			l5:
-			l6:
-			cout << "\nEnter Source Node for Packet " << i << " :";
+				l6:
+				cout << "\nEnter Source Node for Packet " << i << " :";
 			cin >> pkt[i].src;
 
 			if (pkt[i].src < 0 || pkt[i].src >= noNodes)
@@ -394,23 +394,6 @@ int main()
 	std::time_t start_time = std::chrono::system_clock::to_time_t(startSimTime);
 
 	cout << "Simulation started at : " << ctime(&start_time) << endl;
-
-	//	for(int i=0;i < 3;i++){
-	//	
-	//	cout<<"Sending Packet(new Thread) : "<<i<<" .... \n";
-	//	noTransmissions[i] = thread(routingIndividualPkt, pkt[i]);
-	//
-	//	}
-
-	//
-	//
-	//			
-	//	for(int i=0;i < 3;i++){
-	//	
-	//	cout<<"Joining Packet : "<<i<<"\n";
-	//	noTransmissions[i].join();
-	//
-	//	}
 
 	for (int i = 0; i < 3; i++)
 	{

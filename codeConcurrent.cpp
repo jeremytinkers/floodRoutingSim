@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int networkDiameter = 10;
+int networkDiameter = 10; // initially set, updated w user input
 std::chrono::time_point<std::chrono::system_clock > startSimTime, endSimTime;
 
 class packet
@@ -38,7 +38,6 @@ bool dropped[1000] = { false
 
 int noNodes = 1000;
 int noPackets = 1000;
-
 
 void bfs1(int src, int dest, int seq_no)
 {
@@ -187,8 +186,8 @@ void bfs2(int src, int dest, int seq_no)
 
 			//Flooding the packet to nbs nodes on conditions
 
-			thread *arr = new thread[nn[curN].nbrs.size()]; //creating threads for concurrent execution
-			
+			thread *arr = new thread[nn[curN].nbrs.size()];	//creating threads for concurrent execution
+
 			cout << "From Node: " << curN << ", we are ... \n";
 
 			for (auto i: nn[curN].nbrs)
@@ -218,15 +217,12 @@ void bfs2(int src, int dest, int seq_no)
 			//already flooded, so ignore
 			cout << "Already Flooded! \n";
 		}
-		
 	}
 }
 
-
 void routingIndividualPkt_lvl1(packet pkt)
 {
-	retransmit:
-	while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
+	retransmit: while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
 	{
 		//set startTime for curPacket
 		std::chrono::time_point<std::chrono::system_clock > curTime = std::chrono::system_clock::now();
@@ -243,29 +239,30 @@ void routingIndividualPkt_lvl1(packet pkt)
 
 		if (reached[pkt.seq_no])
 		{
-			cout << "\nPacket:"<<pkt.seq_no<<" has been successfully received!\n";
+			cout << "\nPacket:" << pkt.seq_no << " has been successfully received!\n";
 		}
 	}
-	
-	if(dropped[pkt.seq_no]){
-	//Make the current thread sleep for a second before retransmitting...
-	std::this_thread::sleep_for (std::chrono::seconds(1));
+
+	if (dropped[pkt.seq_no])
+	{
+		//Make the current thread sleep for a second before retransmitting...
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		//retransmit after sometime
-		if(pkt.maxRetransmit--){
-		cout<<"\nRetransmitting Packet:"<<pkt.seq_no;
-		goto retransmit;
-	}else{
-		cout<<"\nRetransmits for Packet:"<<pkt.seq_no<<" exhausted!\n";
+		if (pkt.maxRetransmit--)
+		{
+			cout << "\nRetransmitting Packet:" << pkt.seq_no;
+			goto retransmit;
+		}
+		else
+		{
+			cout << "\nRetransmits for Packet:" << pkt.seq_no << " exhausted!\n";
+		}
 	}
-	}
-	
-	
 }
 
 void routingIndividualPkt_lvl2(packet pkt)
 {
-	retransmit:
-	while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
+	retransmit: while (!reached[pkt.seq_no] && !dropped[pkt.seq_no])
 	{
 		//set startTime for curPacket
 		std::chrono::time_point<std::chrono::system_clock > curTime = std::chrono::system_clock::now();
@@ -280,22 +277,25 @@ void routingIndividualPkt_lvl2(packet pkt)
 
 		if (reached[pkt.seq_no])
 		{
-			cout << "\nPacket:"<<pkt.seq_no<<" has been successfully received!\n";
+			cout << "\nPacket:" << pkt.seq_no << " has been successfully received!\n";
 		}
 	}
-	
-	if(dropped[pkt.seq_no]){
-	//Make the current thread sleep for a second before retransmitting...
-	std::this_thread::sleep_for (std::chrono::seconds(1));
+
+	if (dropped[pkt.seq_no])
+	{
+		//Make the current thread sleep for a second before retransmitting...
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		//retransmit after sometime
-		if(pkt.maxRetransmit--){
-		cout<<"\nRetransmitting Packet:"<<pkt.seq_no;
-		goto retransmit;
-	}else{
-		cout<<"\nRetransmits for Packet:"<<pkt.seq_no<<" exhausted!\n";
+		if (pkt.maxRetransmit--)
+		{
+			cout << "\nRetransmitting Packet:" << pkt.seq_no;
+			goto retransmit;
+		}
+		else
+		{
+			cout << "\nRetransmits for Packet:" << pkt.seq_no << " exhausted!\n";
+		}
 	}
-	}
-	
 }
 
 //Check if a node exists in the neighbour set of another node
@@ -318,20 +318,21 @@ int main()
 	//I/O from user:-
 
 	int userChoice = 1;
-	int levelConcurrency=1;
-	
+	int levelConcurrency = 1;
+
 	cout << "\nDo you want to load PreBuilt Network for this simulation? If yes -> 1, If no ->0 \n";
 	cin >> userChoice;
-    
-    l11:
-    cout<<"\nWhat level of concurreny do you prefer? (1 -> Level 1, 2 -> Level 2)";
-    cin>>levelConcurrency;
-    
-    if(levelConcurrency != 1 && levelConcurrency !=2){
-    	cout<<"\nEnter a valid level of concurrency -> 1 or 2";
-    	goto l11;
+
+	l11:
+		cout << "\nWhat level of concurreny do you prefer? (1 -> Level 1, 2 -> Level 2)";
+	cin >> levelConcurrency;
+
+	if (levelConcurrency != 1 && levelConcurrency != 2)
+	{
+		cout << "\nEnter a valid level of concurrency -> 1 or 2";
+		goto l11;
 	}
-	
+
 	if (!userChoice)
 	{
 		//Custom Network as per User's requirement
@@ -389,9 +390,9 @@ int main()
 					goto l3;
 				}
 
-				if (nbrsSize > (noNodes - nn[i].nbrs.size()-1))
+				if (nbrsSize > (noNodes - nn[i].nbrs.size() - 1))
 				{
-					cout << "\nCur Node can only accomodate a max of : " << (noNodes - nn[i].nbrs.size() -1) << " nodes more";
+					cout << "\nCur Node can only accomodate a max of : " << (noNodes - nn[i].nbrs.size() - 1) << " nodes more";
 					goto l3;
 				}
 
@@ -440,14 +441,14 @@ int main()
 		networkDiameter = noNodes;
 		int maxHopCount = networkDiameter;
 		double ttl_left = 3;
-		int retransmitLimit=3;
+		int retransmitLimit = 3;
 
 		cout << "\nEnter maxHopCount permitted for a packet: ";
 		cin >> maxHopCount;
 
 		cout << "\nEnter Time To Live(TTL) desired for a packet(in Seconds, double type so decimal allowed): ";
 		cin >> ttl_left;
-		
+
 		cout << "\nEnter Max No of Retransmissions possible for a packet before it will be discarded: ";
 		cin >> retransmitLimit;
 
@@ -459,8 +460,8 @@ int main()
 			pkt[i].maxRetransmit = retransmitLimit;
 
 			l5:
-			l6:
-			cout << "\nEnter Source Node for Packet " << i << " :";
+				l6:
+				cout << "\nEnter Source Node for Packet " << i << " :";
 			cin >> pkt[i].src;
 
 			if (pkt[i].src < 0 || pkt[i].src >= noNodes)
@@ -535,30 +536,27 @@ int main()
 
 	std::time_t start_time = std::chrono::system_clock::to_time_t(startSimTime);
 
-	cout <<"\nSimulation started at : " << ctime(&start_time) << endl;
+	cout << "\nSimulation started at : " << ctime(&start_time) << endl;
 
-	for(int i=0;i < 3; i++){
-	
-	cout<<"\nAssigning new Thread for Packet:"<<i<<" .... \n";
-	if(levelConcurrency ==1){
-	noTransmissions[i] = thread(routingIndividualPkt_lvl1, pkt[i]);
-}else{
-	noTransmissions[i] = thread(routingIndividualPkt_lvl2, pkt[i]);
-}
-
-	}
-			
-	for(int i=0;i < 3;i++){
-	
-	cout<<"\nJoining Thread of Packet : "<<i<<"\n";
-	noTransmissions[i].join();
-
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "\nAssigning new Thread for Packet:" << i << " .... \n";
+		if (levelConcurrency == 1)
+		{
+			noTransmissions[i] = thread(routingIndividualPkt_lvl1, pkt[i]);
+		}
+		else
+		{
+			noTransmissions[i] = thread(routingIndividualPkt_lvl2, pkt[i]);
+		}
 	}
 
-//	for (int i = 0; i < 3; i++)
-//	{
-//		routingIndividualPkt(pkt[i]);
-//	}
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "\nJoining Thread of Packet : " << i << "\n";
+		noTransmissions[i].join();
+
+	}
 
 	endSimTime = std::chrono::system_clock::now();
 
